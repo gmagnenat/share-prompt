@@ -1,45 +1,53 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-import { connectToDb } from "@utils/database";
+import User from "@models/user";
+import { connectToDB } from "@utils/database";
 
 const handler = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  async session({ session }) {
-    const sessionUser = await User.findOne({
-      email: session.user.email,
-    });
+  callbacks: {
+    async session({ session }) {
+      const sessionUser = await User.findOne({
+        email: session.user.email,
+      });
 
-    session.user.id = sessionUser._id.toString();
+      session.user.id = sessionUser._id.toString();
 
-    return session;
-  },
-  async signIn({ profile }) {
-    try {
-      await connectToDb();
+      return session;
+    },
 
-      // Check if a user already exist
-      const userExists = await User.findOne({ email: profile.email });
+    async signIn({ profile }) {
+      try {
+        console.log("try to connect to DB");
+        await connectToDB();
 
-      // If not, create a new user
-      if (!userExists) {
-        await User.create({
-          email: profile.email,
-          username: profile.name.replace(" ", "").toLowerCase(),
-          image: profile.picture,
-        });
+        // Check if a user already exist
+        const userExists = await User.findOne({ email: profile.email });
+
+        // If not, create a new user
+        if (!userExists) {
+          let username = profile.email.split("@")[0];
+          username = username.replace(/[^a-zA-Z0-9]/g, "").toLocaleLowerCase();
+
+          await User.create({
+            email: profile.email,
+            username: username,
+            image: profile.picture,
+          });
+        }
+
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
       }
-
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    },
   },
 });
 
