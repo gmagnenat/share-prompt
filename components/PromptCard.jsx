@@ -33,7 +33,11 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
               {post.creator.email}
             </p>
           </div>
-          <div className="copy_btn" onClick={handleCopy}>
+          <button
+            aria-label="copy prompt"
+            className="copy_btn"
+            onClick={handleCopy}
+          >
             <Image
               src={
                 copied == post.prompt
@@ -44,7 +48,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
               width={12}
               height={12}
             />
-          </div>
+          </button>
         </div>
       </div>
 
