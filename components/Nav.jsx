@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffet, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 const Nav = () => {
@@ -12,10 +12,13 @@ const Nav = () => {
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const res = await getProviders();
-      setProviders(res);
-    })();
+    const setUpProviders = async () => {
+      const response = await getProviders();
+
+      setProviders(response);
+    };
+
+    setUpProviders();
   }, []);
 
   return (
