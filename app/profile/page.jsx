@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-import Profile from "@components/profile";
+import Profile from "@components/Profile";
 
 const MyProfile = () => {
-  const { data: session } = useSession();
+  const [posts, setPosts] = useState([]);
 
-  const [posts, setPosts] = useState("");
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -22,9 +22,13 @@ const MyProfile = () => {
     if (session?.user.id) fetchPosts();
   }, []);
 
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    console.log("handle edit function");
+  };
 
-  const handleDelete = async () => {};
+  const handleDelete = async () => {
+    console.log("handle delete function");
+  };
 
   return (
     <Profile
