@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const SearchBar = () => {
+const SearchBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
@@ -8,14 +8,15 @@ const SearchBar = () => {
     onSearch(e.target.value);
   };
   return (
-    <div>
+    <form className="relative w-full flex-center">
       <input
         type="text"
         value={searchTerm}
         onChange={handleSearch}
         placeholder="Search prompts..."
+        className="search_input peer"
       />
-    </div>
+    </form>
   );
 };
 export default SearchBar;

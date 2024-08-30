@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import PromptCard from "./PromptCard";
+import SearchBar from "./SearchBar";
 
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
@@ -15,36 +16,38 @@ const PromptCardList = ({ data, handleTagClick }) => {
 };
 
 const Feed = () => {
-  const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
-
-  const handleSearchChange = (e) => {};
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
       const response = await fetch("/api/prompt");
       const data = await response.json();
-
       setPosts(data);
+      setFilteredPosts(data);
     };
 
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    const filtered = posts.filter(
+      (post) =>
+        post.prompt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.creator.username
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        post.tag.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+    );
+    setFilteredPosts(filtered);
+  }, [posts, searchTerm]);
+
   return (
     <section className="feed">
-      <form className="relative w-full flex-center">
-        <input
-          type="text"
-          placeholder="Search for a tag or a username"
-          value={searchText}
-          onChange={handleSearchChange}
-          required
-          className="search_input peer"
-        />
-      </form>
+      <SearchBar onSearch={setSearchTerm} />
 
-      <PromptCardList data={[posts]} handleTagClick={() => {}} />
+      <PromptCardList data={[filteredPosts]} handleTagClick={() => {}} />
     </section>
   );
 };
