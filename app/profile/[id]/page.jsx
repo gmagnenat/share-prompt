@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -8,6 +8,7 @@ import Profile from "@components/Profile";
 
 const UserProfile = ({ params }) => {
   const searchParams = useSearchParams();
+
   const userName = searchParams.get("name");
 
   const [userPosts, setUserPosts] = useState([]);
@@ -24,11 +25,13 @@ const UserProfile = ({ params }) => {
   }, [params?.id]);
 
   return (
-    <Profile
-      name={userName}
-      desc={`Welcome to ${userName}'s profile.`}
-      data={userPosts}
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <Profile
+        name={userName}
+        desc={`Welcome to ${userName}'s profile.`}
+        data={userPosts}
+      />
+    </Suspense>
   );
 };
 export default UserProfile;
