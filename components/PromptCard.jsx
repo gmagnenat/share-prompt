@@ -1,21 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
-  const [copied, setCopied] = useState("");
-
   const { data: session } = useSession();
-
   const pathName = usePathname();
+  const router = useRouter();
+
+  const [copied, setCopied] = useState("");
 
   const handleCopy = () => {
     setCopied(post.prompt);
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(""), 3000);
+  };
+
+  const handleProfileClick = () => {
+    if (post.creator._id === session?.user.id) return router.push("/profile");
+
+    router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);
   };
 
   return (
@@ -29,7 +35,7 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
             width={47}
             className="rounded-full object-contain"
           />
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col" onClick={handleProfileClick}>
             <h3 className="font-satoshi font-semibold text-gray-900">
               {post.creator.username}
             </h3>

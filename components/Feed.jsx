@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 import PromptCard from "./PromptCard";
 import SearchBar from "./SearchBar";
@@ -20,7 +20,8 @@ const PromptCardList = ({ data, handleTagClick }) => {
 };
 
 const Feed = () => {
-  const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
 
@@ -28,7 +29,7 @@ const Feed = () => {
     const fetchPosts = async () => {
       const response = await fetch("/api/prompt");
       const data = await response.json();
-      setPosts(data);
+      setAllPosts(data);
       setFilteredPosts(data);
     };
 
@@ -36,7 +37,7 @@ const Feed = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = posts.filter(
+    const filtered = allPosts.filter(
       (post) =>
         post.prompt.toLowerCase().includes(searchTerm.toLowerCase()) ||
         post.creator.username
@@ -45,7 +46,7 @@ const Feed = () => {
         post.tag.toLowerCase().includes(searchTerm.toLocaleLowerCase())
     );
     setFilteredPosts(filtered);
-  }, [posts, searchTerm]);
+  }, [allPosts, searchTerm]);
 
   const handleTagClick = (e) => {
     setSearchTerm(e);
