@@ -1,17 +1,14 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
 
 import Profile from "@components/Profile";
 
 const UserProfile = ({ params }) => {
-  const searchParams = useSearchParams();
-
-  const userName = searchParams.get("name");
+  console.log(params.id);
 
   const [userPosts, setUserPosts] = useState([]);
+  const [userData, setUserData] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,14 +21,24 @@ const UserProfile = ({ params }) => {
     if (params?.id) fetchPosts();
   }, [params?.id]);
 
+  // Fetch the user linked to the post
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await fetch(`/api/users/${params?.id}`);
+      const data = await response.json();
+
+      setUserData(data);
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Profile
-        name={userName}
-        desc={`Welcome to ${userName}'s profile.`}
-        data={userPosts}
-      />
-    </Suspense>
+    <Profile
+      name={userData.username}
+      desc={`Welcome to ${userData.username}'s profile.`}
+      data={userPosts}
+    />
   );
 };
 export default UserProfile;
