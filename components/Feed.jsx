@@ -8,7 +8,7 @@ import SearchBar from "./SearchBar";
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
     <div className="mt-16 prompt_layout">
-      {data[0].map((post) => (
+      {data.map((post) => (
         <PromptCard
           handleTagClick={handleTagClick}
           key={post._id}
@@ -21,7 +21,6 @@ const PromptCardList = ({ data, handleTagClick }) => {
 
 const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
 
@@ -60,7 +59,7 @@ const Feed = () => {
         searchTerm={searchTerm}
       />
 
-      <PromptCardList data={[filteredPosts]} handleTagClick={handleTagClick} />
+      <PromptCardList data={filteredPosts} handleTagClick={handleTagClick} />
     </section>
   );
 };
